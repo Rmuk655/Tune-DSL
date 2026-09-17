@@ -1,0 +1,17 @@
+tempo 100
+
+effect highpass 150
+effect distortion 3
+effect tremolo 5 0.4
+effect lowpass 3000
+effect delay 0.18 0.3
+
+instrument lead = square
+pattern riff {
+  note C3 : 1/4 @ 0.9
+  note E3 : 1/4 @ 0.7
+  note G3 : 1/4 @ 0.9
+  note C4 : 1/4 @ 1.0
+}
+
+play lead riff

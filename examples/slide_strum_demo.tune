@@ -1,0 +1,21 @@
+tempo 90
+
+instrument lead = sine envelope 0.02 0.15
+instrument guitar = pulse
+
+pattern melody {
+  note C4 : 1/2 @ 0.8
+  slide E4 : 1/2 @ 0.8
+  slide G4 : 1/2 @ 0.8
+  slide C5 : 1
+}
+
+pattern strummed {
+  strum [C3, E3, G3] : 1 delay 0.03 @ 0.7
+  strum [F3, A3, C4] : 1 delay 0.03 @ 0.7
+  strum [G3, B3, D4] : 1 delay 0.03 @ 0.7
+  strum [C3, E3, G3] : 1 delay 0.03 @ 0.7
+}
+
+play lead melody
+play guitar strummed

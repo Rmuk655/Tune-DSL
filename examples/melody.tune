@@ -1,0 +1,28 @@
+tempo 110
+
+instrument lead = sine
+instrument bass = square
+
+pattern melody {
+  note C4 : 1/4
+  note D4 : 1/4
+  note E4 : 1/4
+  note C4 : 1/4
+  note E4 : 1/2
+  note D4 : 1/2
+  repeat 2 {
+    note G4 : 1/8
+    note F4 : 1/8
+  }
+  chord [C4, E4, G4] : 1
+}
+
+pattern bassline {
+  note C3 : 1/2
+  note G2 : 1/2
+  note A2 : 1/2
+  note F2 : 1/2
+}
+
+play lead melody
+play bass bassline

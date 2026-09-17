@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tune DSL Playground</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<style>
+  :root {
+    --bg: #14141c;
+    --panel: #1c1c28;
+    --panel2: #22222f;
+    --border: #2e2e40;
+    --text: #e6e6f0;
+    --muted: #8888a0;
+    --accent: #7c6dfa;
+    --accent2: #4de3c1;
+    --error: #ff6b81;
+    --warning: #ffcb6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(160deg, var(--bg), #191924 60%, var(--bg));
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    padding: 22px 32px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header .sub { color: var(--muted); font-size: 13px; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 18px;
+    padding: 0 32px 32px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .CodeMirror {
+    height: 560px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  .side { display: flex; flex-direction: column; gap: 16px; }
+
+  .field { padding: 14px 16px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  select, .btn {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+  }
+  select:focus { outline: 2px solid var(--accent); }
+
+  .backend-row { display: flex; gap: 8px; }
+  .backend-btn {
+    flex: 1;
+    padding: 9px 4px;
+    text-align: center;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .backend-btn.active {
+    background: linear-gradient(135deg, var(--accent), #5b4fd6);
+    color: white;
+    border-color: transparent;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), #2bb89f);
+    color: #06231d;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    padding: 13px;
+    font-size: 15px;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+    box-shadow: 0 6px 18px rgba(77, 227, 193, 0.25);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(77, 227, 193, 0.35); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+
+  .btn-secondary {
+    background: var(--panel2);
+    color: var(--text);
+    cursor: pointer;
+    padding: 10px;
+    font-size: 13.5px;
+  }
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  .status {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    min-height: 20px;
+  }
+  .status.ok { color: var(--accent2); }
+  .status.error { color: var(--error); white-space: pre-wrap; font-family: monospace; font-size: 12.5px; }
+  .status.warning { color: var(--warning); }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 16px 14px;
+    font-size: 12.5px;
+  }
+  .stat { background: var(--panel2); border-radius: 8px; padding: 8px 10px; }
+  .stat .k { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .stat .v { font-weight: 700; font-size: 15px; margin-top: 2px; }
+
+  audio { width: 100%; }
+  .audio-wrap { padding: 14px 16px; }
+
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎵 Tune DSL Playground</h1>
+  <span class="sub">write, compile, and play — powered by the real Python / C++ / MLIR backends</span>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <div class="panel-header">
+      <span>song.tune</span>
+      <select id="exampleSelect" style="width: 220px; padding: 4px 8px; font-size: 12px;">
+        <option value="">Load an example…</option>
+      </select>
+    </div>
+    <textarea id="editor"></textarea>
+  </div>
+
+  <div class="side">
+    <div class="panel">
+      <div class="field">
+        <label>Backend</label>
+        <div class="backend-row">
+          <div class="backend-btn active" data-backend="python">Python</div>
+          <div class="backend-btn" data-backend="cpp">C++</div>
+          <div class="backend-btn" data-backend="mlir">MLIR</div>
+        </div>
+      </div>
+      <div class="field" style="padding-top: 0;">
+        <button class="btn btn-primary" id="compileBtn">▶ Compile &amp; Play</button>
+      </div>
+      <div class="field" style="padding-top: 0;">
+        <button class="btn btn-secondary" id="midiBtn">⬇ Export MIDI</button>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="stats" id="stats" style="display:none;">
+        <div class="stat"><div class="k">Tempo</div><div class="v" id="statTempo">—</div></div>
+        <div class="stat"><div class="k">Duration</div><div class="v" id="statDuration">—</div></div>
+        <div class="stat"><div class="k">Instruments</div><div class="v" id="statInstruments">—</div></div>
+        <div class="stat"><div class="k">DCE removed</div><div class="v" id="statDce">—</div></div>
+      </div>
+      <div class="audio-wrap" id="audioWrap" style="display:none;">
+        <audio id="player" controls></audio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_SOURCE = `tempo 110
+
+instrument lead = sine
+instrument bass = square
+
+pattern melody {
+  note C4 : 1/4 @ 0.8
+  note E4 : 1/4 @ 0.6
+  chord [C4, E4, G4] : 1/2 @ 0.9
+}
+
+pattern bassline {
+  note C3 : 1/2
+  note G2 : 1/2
+}
+
+play lead melody
+play bass bassline
+`;
+
+const cm = CodeMirror.fromTextArea(document.getElementById('editor'), {
+  lineNumbers: true,
+  theme: 'dracula',
+  indentUnit: 2,
+  tabSize: 2,
+  matchBrackets: true,
+  value: DEFAULT_SOURCE,
+});
+cm.setValue(DEFAULT_SOURCE);
+
+let backend = 'python';
+document.querySelectorAll('.backend-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.backend-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    backend = btn.dataset.backend;
+  });
+});
+
+const statusEl = document.getElementById('status');
+const statsEl = document.getElementById('stats');
+const audioWrap = document.getElementById('audioWrap');
+const player = document.getElementById('player');
+const compileBtn = document.getElementById('compileBtn');
+const midiBtn = document.getElementById('midiBtn');
+
+function setStatus(text, cls) {
+  statusEl.textContent = text;
+  statusEl.className = 'status' + (cls ? ' ' + cls : '');
+}
+
+async function compileAndPlay() {
+  compileBtn.disabled = true;
+  compileBtn.innerHTML = '<span class="spinner"></span>Compiling…';
+  setStatus('');
+  statsEl.style.display = 'none';
+  audioWrap.style.display = 'none';
+
+  try {
+    const resp = await fetch('/api/compile', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({source: cm.getValue(), backend}),
+    });
+    const data = await resp.json();
+
+    if (!data.ok) {
+      setStatus(data.error, 'error');
+      return;
+    }
+
+    if (data.warning) {
+      setStatus(data.warning, 'warning');
+    } else {
+      setStatus('✓ Compiled successfully (' + backend + ' backend)', 'ok');
+    }
+
+    document.getElementById('statTempo').textContent = Math.round(data.tempo) + ' bpm';
+    document.getElementById('statDuration').textContent =
+      data.duration != null ? data.duration.toFixed(2) + 's' : '—';
+    document.getElementById('statInstruments').textContent = data.num_instruments;
+    document.getElementById('statDce').textContent = data.dce_eliminated;
+    statsEl.style.display = 'grid';
+
+    player.src = data.audio_url + '?t=' + Date.now();
+    audioWrap.style.display = 'block';
+    player.play().catch(() => {});
+  } catch (e) {
+    setStatus('Request failed: ' + e, 'error');
+  } finally {
+    compileBtn.disabled = false;
+    compileBtn.innerHTML = '▶ Compile &amp; Play';
+  }
+}
+
+async function exportMidi() {
+  midiBtn.disabled = true;
+  const originalText = midiBtn.textContent;
+  midiBtn.textContent = 'Exporting…';
+  try {
+    const resp = await fetch('/api/export-midi', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({source: cm.getValue()}),
+    });
+    const data = await resp.json();
+    if (!data.ok) {
+      setStatus(data.error, 'error');
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = data.midi_url;
+    a.download = 'tune_export.mid';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (e) {
+    setStatus('MIDI export failed: ' + e, 'error');
+  } finally {
+    midiBtn.disabled = false;
+    midiBtn.textContent = originalText;
+  }
+}
+
+compileBtn.addEventListener('click', compileAndPlay);
+midiBtn.addEventListener('click', exportMidi);
+
+// keyboard shortcut: Ctrl/Cmd+Enter to compile
+cm.setOption('extraKeys', {
+  'Ctrl-Enter': compileAndPlay,
+  'Cmd-Enter': compileAndPlay,
+});
+
+// load example list
+fetch('/api/examples').then(r => r.json()).then(examples => {
+  const sel = document.getElementById('exampleSelect');
+  Object.keys(examples).forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => {
+    if (sel.value && examples[sel.value]) {
+      cm.setValue(examples[sel.value]);
+    }
+  });
+}).catch(() => {});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+tempo 100
+
+effect lowpass 1800
+effect delay 0.2 0.35
+
+instrument lead = sine
+instrument bass = square
+instrument perc = noise
+instrument pad = pulse
+
+pattern melody {
+  note C4 : 1/4 @ 0.8
+  note E4 : 1/4 @ 0.6
+  chord [C4, E4, G4] : 1/2 @ 0.9
+  repeat 2 {
+    note G4 : 1/8 @ 0.4
+    note A4 : 1/8 @ 0.4
+  }
+  note C5 : 1/2 @ 1.0
+}
+
+pattern bassline {
+  note C3 : 1/2 @ 1.0
+  note G2 : 1/2 @ 0.7
+  note A2 : 1/2 @ 0.9
+  note F2 : 1/2 @ 0.7
+}
+
+pattern hits {
+  note C4 : 1/8 @ 0.3
+  rest : 1/8
+  note C4 : 1/8 @ 0.25
+  rest : 1/8
+  note C4 : 1/8 @ 0.35
+  rest : 1/8
+  note C4 : 1/8 @ 0.2
+  rest : 1/8
+}
+
+pattern padline {
+  chord [C3, G3] : 2 @ 0.25
+}
+
+play lead melody
+play bass bassline
+play perc hits
+play pad padline
