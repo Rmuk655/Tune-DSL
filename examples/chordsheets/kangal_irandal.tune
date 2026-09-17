@@ -1,0 +1,175 @@
+tempo 106
+
+# =====================================================================
+# 1. GUITAR LAYER (.guitar equivalent)
+# =====================================================================
+instrument guitar_0 = pulse
+pattern guitar_0_pattern {
+  # Chorus: "kangal irandal..."
+  note C3 : 1
+  note G3 : 1
+  note Ds3 : 1
+  note G3 : 1
+  note As3 : 1
+  note F4 : 1
+  note D4 : 1
+  note F4 : 1
+  note Gs3 : 1
+  note Ds4 : 1
+  note C4 : 1
+  note Ds4 : 1
+  note F3 : 1
+  note C4 : 1
+  note A3 : 1
+  note C4 : 1
+  note F3 : 1
+  note D4 : 1
+  note Gs3 : 1
+  note C4 : 1
+  note As3 : 1
+  note F4 : 1
+  note D4 : 1
+  note F4 : 1
+  note As3 : 1
+  note F4 : 1
+  note D4 : 1
+  note F4 : 1
+  note G3 : 1
+  note D4 : 1
+  note As3 : 1
+  note D4 : 1
+
+  # Verse: "chinna chirippil..."
+  note C3 : 1
+  note G3 : 1
+  note Ds3 : 1
+  note G3 : 1
+  note As3 : 1
+  note F4 : 1
+  note D4 : 1
+  note F4 : 1
+  note Gs3 : 1
+  note Ds4 : 1
+  note C4 : 1
+  note Ds4 : 1
+  note F3 : 1
+  note C4 : 1
+  note A3 : 1
+  note C4 : 1
+  note F3 : 1
+  note D4 : 1
+  note Gs3 : 1
+  note C4 : 1
+  note As3 : 1
+  note F4 : 1
+  note D4 : 1
+  note F4 : 1
+  note G3 : 1
+  note D4 : 1
+  note As3 : 1
+  note D4 : 1
+  note C3 : 1
+  note G3 : 1
+  note Ds3 : 1
+  note G3 : 1
+}
+play guitar_0 guitar_0_pattern
+
+# =====================================================================
+# 2. KEYBOARD LAYER (.keyboard equivalent)
+# =====================================================================
+instrument keyboard_1 = sine
+pattern keyboard_1_pattern {
+  # Chorus
+  chord [C4,Ds4,G4] : 4
+  chord [As4,D5,F5] : 4
+  chord [Gs4,C5,Ds5] : 4
+  chord [F4,A4,C5] : 4
+  chord [F4,Gs4,C5,D5] : 4
+  chord [As4,D5,F5] : 4
+  chord [As4,D5,F5] : 4
+  chord [G4,As4,D5] : 4
+
+  # Verse
+  chord [C4,Ds4,G4] : 4
+  chord [As4,D5,F5] : 4
+  chord [Gs4,C5,Ds5] : 4
+  chord [F4,A4,C5] : 4
+  chord [F4,Gs4,C5,D5] : 4
+  chord [As4,D5,F5] : 4
+  chord [G4,As4,D5] : 4
+  chord [C4,Ds4,G4] : 4
+}
+play keyboard_1 keyboard_1_pattern
+
+# =====================================================================
+# 3. BASS LAYER (.bass equivalent)
+# =====================================================================
+instrument bass_2 = square
+pattern bass_2_pattern {
+  # Chorus
+  note C2 : 4
+  note As2 : 4
+  note Gs2 : 4
+  note F2 : 4
+  note F2 : 4
+  note As2 : 4
+  note As2 : 4
+  note G2 : 4
+
+  # Verse
+  note C2 : 4
+  note As2 : 4
+  note Gs2 : 4
+  note F2 : 4
+  note F2 : 4
+  note As2 : 4
+  note G2 : 4
+  note C2 : 4
+}
+play bass_2 bass_2_pattern
+
+# =====================================================================
+# 4. FLUTE MELODY REPLACEMENT LAYER (.flute equivalent)
+# Swapped to 'sine' waveform to comply with compiler rules.
+# =====================================================================
+instrument lead_3 = sine
+pattern lead_3_pattern {
+  # Chorus melody line
+  note C4 : 1.0
+  note Ds4 : 1.0
+  note D4 : 0.5
+  note Ds4 : 0.5
+  note F4 : 1.0
+  note Ds4 : 1.0
+  note D4 : 1.0
+  note C4 : 1.0
+  note Ds4 : 1.0
+  note D4 : 1.0
+  note C4 : 0.5
+  note D4 : 0.5
+  note Ds4 : 1.0
+  note F4 : 1.0
+  note As4 : 1.0
+  note A4 : 1.0
+  note F4 : 1.0
+  note G4 : 1.0
+
+  # Verse melody line
+  note C4 : 1.0
+  note Ds4 : 1.0
+  note D4 : 0.5
+  note Ds4 : 0.5
+  note F4 : 1.0
+  note Ds4 : 1.0
+  note D4 : 1.0
+  note C4 : 1.0
+  note Ds4 : 1.0
+  note D4 : 1.0
+  note C4 : 0.5
+  note D4 : 0.5
+  note Ds4 : 1.0
+  note D4 : 1.0
+  note C4 : 4.0
+}
+play lead_3 lead_3_pattern
