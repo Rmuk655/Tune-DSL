@@ -230,6 +230,29 @@
         <audio id="player" controls></audio>
       </div>
     </div>
+
+    <div class="panel">
+      <div class="panel-header"><span>Reference &amp; Compare</span></div>
+      <div class="field">
+        <label>Upload a reference WAV (e.g. a hummed/recorded melody)</label>
+        <input type="file" id="referenceFile" accept="audio/wav,.wav" style="width:100%; font-size: 12px;">
+      </div>
+      <div class="field" style="padding-top: 0; display:flex; gap:8px;">
+        <button class="btn btn-secondary" id="transcribeBtn" style="flex:1;">🎼 Transcribe to Tune</button>
+        <button class="btn btn-secondary" id="compareBtn" style="flex:1;">📊 Compare to reference</button>
+      </div>
+      <div class="status" id="refStatus"></div>
+      <div class="stats" id="compareStats" style="display:none;">
+        <div class="stat"><div class="k">Similarity</div><div class="v" id="cmpSimilarity">—</div></div>
+        <div class="stat"><div class="k">Waveform corr.</div><div class="v" id="cmpWaveform">—</div></div>
+        <div class="stat"><div class="k">Spectral corr.</div><div class="v" id="cmpSpectral">—</div></div>
+        <div class="stat"><div class="k">Duration diff</div><div class="v" id="cmpDuration">—</div></div>
+      </div>
+      <div class="audio-wrap" id="referenceAudioWrap" style="display:none;">
+        <label style="font-size:11px; color: var(--muted); text-transform: uppercase;">Reference</label>
+        <audio id="referencePlayer" controls></audio>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -321,6 +344,9 @@ async function compileAndPlay() {
     player.src = data.audio_url + '?t=' + Date.now();
     audioWrap.style.display = 'block';
     player.play().catch(() => {});
+
+    // remember the token for /api/compare (audio_url looks like /api/audio/<token>.wav)
+    lastActualToken = data.audio_url.split('/').pop().replace('.wav', '');
   } catch (e) {
     setStatus('Request failed: ' + e, 'error');
   } finally {
@@ -357,6 +383,107 @@ async function exportMidi() {
     midiBtn.textContent = originalText;
   }
 }
+
+// ---- Reference upload / transcribe / compare -----------------------
+// See docs/architecture/06_COMPILER_ARCHITECTURE.md and
+// src/audio_transcribe.py / src/audio_compare.py for what these
+// actually do: transcription is a best-effort, monophonic starting
+// point to tune by hand; comparison is a numeric correlation
+// heuristic, not a perceptual/musical judgment.
+
+let lastActualToken = null;   // set after a successful Compile & Play
+let referenceToken = null;    // set after a successful transcribe (stashes the upload server-side)
+
+const referenceFileInput = document.getElementById('referenceFile');
+const transcribeBtn = document.getElementById('transcribeBtn');
+const compareBtn = document.getElementById('compareBtn');
+const refStatusEl = document.getElementById('refStatus');
+const compareStatsEl = document.getElementById('compareStats');
+const referenceAudioWrap = document.getElementById('referenceAudioWrap');
+const referencePlayer = document.getElementById('referencePlayer');
+
+function setRefStatus(text, cls) {
+  refStatusEl.textContent = text;
+  refStatusEl.className = 'status' + (cls ? ' ' + cls : '');
+}
+
+async function transcribeReference() {
+  const file = referenceFileInput.files[0];
+  if (!file) {
+    setRefStatus('Choose a WAV file first.', 'error');
+    return;
+  }
+  transcribeBtn.disabled = true;
+  const originalText = transcribeBtn.textContent;
+  transcribeBtn.innerHTML = '<span class="spinner"></span>Transcribing…';
+  setRefStatus('');
+  try {
+    const formData = new FormData();
+    formData.append('audio', file);
+    const resp = await fetch('/api/transcribe', { method: 'POST', body: formData });
+    const data = await resp.json();
+    if (!data.ok) {
+      setRefStatus(data.error, 'error');
+      return;
+    }
+    cm.setValue(data.source);
+    referenceToken = data.reference_token;
+    referencePlayer.src = data.reference_audio_url + '?t=' + Date.now();
+    referenceAudioWrap.style.display = 'block';
+    setRefStatus('✓ Draft loaded into the editor — tune it by ear, then Compile & Play, then Compare.', 'ok');
+  } catch (e) {
+    setRefStatus('Request failed: ' + e, 'error');
+  } finally {
+    transcribeBtn.disabled = false;
+    transcribeBtn.textContent = originalText;
+  }
+}
+
+async function compareToReference() {
+  if (!lastActualToken) {
+    setRefStatus('Compile & Play something first, then compare.', 'error');
+    return;
+  }
+  const freshFile = referenceFileInput.files[0];
+  if (!freshFile && !referenceToken) {
+    setRefStatus('Choose a reference WAV (or transcribe one) first.', 'error');
+    return;
+  }
+  compareBtn.disabled = true;
+  const originalText = compareBtn.textContent;
+  compareBtn.innerHTML = '<span class="spinner"></span>Comparing…';
+  compareStatsEl.style.display = 'none';
+  try {
+    const formData = new FormData();
+    formData.append('actual_token', lastActualToken);
+    if (freshFile) {
+      formData.append('audio', freshFile);
+    } else {
+      formData.append('reference_token', referenceToken);
+    }
+    const resp = await fetch('/api/compare', { method: 'POST', body: formData });
+    const data = await resp.json();
+    if (!data.ok) {
+      setRefStatus(data.error, 'error');
+      return;
+    }
+    const m = data.metrics;
+    document.getElementById('cmpSimilarity').textContent = m.similarity_score.toFixed(1) + ' / 100';
+    document.getElementById('cmpWaveform').textContent = m.waveform_correlation.toFixed(3);
+    document.getElementById('cmpSpectral').textContent = m.spectral_correlation.toFixed(3);
+    document.getElementById('cmpDuration').textContent = (m.duration_diff_sec >= 0 ? '+' : '') + m.duration_diff_sec.toFixed(2) + 's';
+    compareStatsEl.style.display = 'grid';
+    setRefStatus('✓ Compared — see src/audio_compare.py for what these numbers mean.', 'ok');
+  } catch (e) {
+    setRefStatus('Request failed: ' + e, 'error');
+  } finally {
+    compareBtn.disabled = false;
+    compareBtn.textContent = originalText;
+  }
+}
+
+transcribeBtn.addEventListener('click', transcribeReference);
+compareBtn.addEventListener('click', compareToReference);
 
 compileBtn.addEventListener('click', compileAndPlay);
 midiBtn.addEventListener('click', exportMidi);

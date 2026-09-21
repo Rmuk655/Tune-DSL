@@ -55,6 +55,9 @@ def main():
     ap.add_argument("-o", "--output", help="output .wav path (default: derived from the first input file)")
     ap.add_argument("--backend", choices=["python", "cpp", "mlir"], default="python")
     ap.add_argument("--export-midi", metavar="PATH", help="also export a Standard MIDI File")
+    ap.add_argument("--compare-to", metavar="EXPECTED_WAV",
+                     help="after rendering, compare the output against a reference WAV "
+                          "file and print a numeric similarity report -- see src/audio_compare.py")
     ap.add_argument("--to-tune", action="store_true",
                      help="don't compile -- just print the converted Tune source to stdout")
     args = ap.parse_args()
@@ -146,6 +149,19 @@ def main():
         from midi_export import export_midi
         export_midi(result, args.export_midi)
         print(f"wrote {args.export_midi} (MIDI)")
+
+    if args.compare_to:
+        from audio_compare import compare_files, render_report, AudioCompareError
+        if not os.path.isfile(args.compare_to):
+            print(f"error: --compare-to file not found: {args.compare_to}", file=sys.stderr)
+            sys.exit(1)
+        try:
+            metrics = compare_files(args.compare_to, out_path)
+        except AudioCompareError as e:
+            print(f"error comparing audio: {e}", file=sys.stderr)
+            sys.exit(1)
+        print()
+        print(render_report(metrics, args.compare_to, out_path))
 
 
 if __name__ == "__main__":
