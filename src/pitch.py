@@ -56,3 +56,35 @@ def pitch_to_freq(name: str) -> float:
     midi = (octave + 1) * 12 + semitone_in_octave
     semitones_from_a4 = midi - A4_MIDI
     return A4_FREQ * (2.0 ** (semitones_from_a4 / 12.0))
+
+
+# Sharp-preferred spelling, in Tune's own 's' notation (not '#'), so a name
+# produced here is always a valid Tune source pitch literal (src/lexer.py).
+_SEMITONE_TO_PITCH_CLASS = [
+    "C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B",
+]
+
+
+def freq_to_midi(freq_hz: float) -> int:
+    """Nearest MIDI note number for a frequency (inverse of pitch_to_freq,
+    up to rounding). Mirrors src/midi_export.py's freq_to_midi_note -- kept
+    here too since pitch.py is the module that owns pitch<->frequency math."""
+    if freq_hz <= 0:
+        raise PitchError(f"cannot convert non-positive frequency {freq_hz!r} to a pitch")
+    return round(A4_MIDI + 12.0 * math.log2(freq_hz / A4_FREQ))
+
+
+def midi_to_pitch_name(midi_note: int) -> str:
+    """Inverse of the MIDI-number step inside pitch_to_freq: nearest Tune
+    pitch literal for a MIDI note number, e.g. 60 -> 'C4', 61 -> 'Cs4'.
+    Sharp spelling only (Tune source has no separate flat-preferred form)."""
+    octave = midi_note // 12 - 1
+    semitone_in_octave = midi_note % 12
+    return f"{_SEMITONE_TO_PITCH_CLASS[semitone_in_octave]}{octave}"
+
+
+def freq_to_pitch_name(freq_hz: float) -> str:
+    """Nearest Tune pitch literal for an arbitrary frequency, e.g. for
+    transcribing a detected pitch (src/audio_transcribe.py) back to source
+    text. Lossy: snaps to the nearest equal-tempered semitone."""
+    return midi_to_pitch_name(freq_to_midi(freq_hz))

@@ -27,6 +27,9 @@ from lexer import LexError
 from parser import parse, ParseError
 from semantic import analyze, SemanticError
 import reference as ref
+from audio_transcribe import transcribe_to_tune, TranscribeError
+from audio_compare import compare_files, AudioCompareError
+from audio_io import AudioReadError
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 EXAMPLES_DIR = os.path.join(APP_ROOT, "..", "examples")
@@ -163,6 +166,77 @@ def api_export_midi():
 def api_midi(filename):
     return send_from_directory(OUTPUT_DIR, filename, mimetype="audio/midi", as_attachment=True,
                                 download_name="tune_export.mid")
+
+
+@app.route("/api/transcribe", methods=["POST"])
+def api_transcribe():
+    """Upload an audio file (a hummed/whistled/played reference melody)
+    and get back a draft Tune DSL source -- see src/audio_transcribe.py
+    for exactly what this is (monophonic, best-effort, meant to be tuned
+    by hand afterward). Also stashes the uploaded file server-side under
+    a token, so /api/compare below can reuse it without a second upload.
+    """
+    if "audio" not in request.files:
+        return jsonify({"ok": False, "error": "no 'audio' file in the upload"}), 400
+    upload = request.files["audio"]
+    if upload.filename == "":
+        return jsonify({"ok": False, "error": "empty filename"}), 400
+
+    tempo = request.form.get("tempo")
+    tempo_bpm = float(tempo) if tempo else None
+    waveform = request.form.get("waveform", "sine")
+
+    token = uuid.uuid4().hex
+    ref_path = os.path.join(OUTPUT_DIR, f"{token}_reference.wav")
+    upload.save(ref_path)
+
+    try:
+        source_text = transcribe_to_tune(ref_path, tempo_bpm=tempo_bpm, waveform=waveform)
+    except (TranscribeError, AudioReadError) as e:
+        return jsonify({"ok": False, "error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"ok": False, "error": f"internal error: {e}\n{traceback.format_exc()}"}), 500
+
+    return jsonify({
+        "ok": True,
+        "source": source_text,
+        "reference_token": token,
+        "reference_audio_url": f"/api/audio/{token}_reference.wav",
+    })
+
+
+@app.route("/api/compare", methods=["POST"])
+def api_compare():
+    """Compare a previously-compiled 'actual' render against an 'expected'
+    reference -- either a freshly uploaded file, or one already stashed
+    server-side by a prior /api/transcribe call (reference_token). See
+    src/audio_compare.py's module docstring for what the returned numbers
+    mean (a correlation heuristic, not a perceptual judgment)."""
+    actual_token = request.form.get("actual_token", "")
+    if not actual_token:
+        return jsonify({"ok": False, "error": "missing 'actual_token' -- compile something first"}), 400
+    actual_path = os.path.join(OUTPUT_DIR, f"{actual_token}.wav")
+    if not os.path.isfile(actual_path):
+        return jsonify({"ok": False, "error": "that compiled audio has expired -- compile again"}), 400
+
+    if "audio" in request.files and request.files["audio"].filename:
+        token = uuid.uuid4().hex
+        expected_path = os.path.join(OUTPUT_DIR, f"{token}_reference.wav")
+        request.files["audio"].save(expected_path)
+    else:
+        reference_token = request.form.get("reference_token", "")
+        expected_path = os.path.join(OUTPUT_DIR, f"{reference_token}_reference.wav")
+        if not reference_token or not os.path.isfile(expected_path):
+            return jsonify({"ok": False, "error": "no reference audio -- upload one, or transcribe one first"}), 400
+
+    try:
+        metrics = compare_files(expected_path, actual_path)
+    except (AudioCompareError, AudioReadError) as e:
+        return jsonify({"ok": False, "error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"ok": False, "error": f"internal error: {e}\n{traceback.format_exc()}"}), 500
+
+    return jsonify({"ok": True, "metrics": metrics})
 
 
 INDEX_HTML = None  # set below, loaded from index.html at import time
