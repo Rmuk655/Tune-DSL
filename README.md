@@ -30,8 +30,8 @@ source.tune -> lexer -> parser -> AST -> semantic analysis
 - A 242-test `pytest` suite, including sample-level numeric diffs
   between backends.
 
-This is a personal/hackathon project (not a graded team project), built
-solo. See [docs/ProjectMgmt/01_INTRODUCTION.md](docs/ProjectMgmt/01_INTRODUCTION.md)
+This is a personal/hackathon project (not a graded team project). See
+[docs/ProjectMgmt/01_INTRODUCTION.md](docs/ProjectMgmt/01_INTRODUCTION.md)
 for the fuller motivation.
 
 ## Quickstart

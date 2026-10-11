@@ -1,4 +1,9 @@
-.wav
-.png
-/__pycache__
-/.pytest_cache
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Generated audio/images (scratch outputs in the project root)
+/*.wav
+/*.png
