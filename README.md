@@ -101,7 +101,3 @@ TuneDSL/
 ├── mlir_test/      # standalone MLIR prototypes, verified before embedding
 └── tests/          # pytest suite (251 tests, one file per module)
 ```
-
-## Authorship
-
-Tune DSL was designed and directed by Krishnan R (language design, architecture decisions, requirements and review). The implementation was written with an AI coding assistant (Claude Code) under that direction.
