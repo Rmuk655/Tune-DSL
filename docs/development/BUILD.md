@@ -14,7 +14,7 @@ x86_64/Python 3.12).
 ```bash
 python3 -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
-pip install numpy
+pip install -r requirements.txt      # numpy (+ flask for the web GUI)
 ```
 
 This alone is enough for `--backend python` (the default), the
@@ -67,7 +67,7 @@ This is the one dependency where the exact major version matters —
 ## 5. Optional: test suite
 
 ```bash
-pip install pytest mido
+pip install -r requirements-dev.txt   # adds pytest and mido
 pytest tests/
 ```
 

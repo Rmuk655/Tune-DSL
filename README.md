@@ -38,7 +38,8 @@ for the fuller motivation.
 
 ```bash
 python3 -m venv venv && source venv/bin/activate
-pip install numpy flask mido pytest
+pip install -r requirements.txt        # numpy + flask (core and web GUI)
+# for the test suite: pip install -r requirements-dev.txt
 
 python3 tune.py examples/melody.tune
 # wrote examples/melody.wav (1.64s, tempo 110 bpm)
