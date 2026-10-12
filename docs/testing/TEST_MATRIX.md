@@ -1,6 +1,6 @@
 # Test Matrix
 
-242 tests across 13 files, one file per module. Verified by actually
+251 tests across 13 files, one file per module. Verified by actually
 running the suite:
 
 ```text
