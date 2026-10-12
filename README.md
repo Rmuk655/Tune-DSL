@@ -1,5 +1,7 @@
 # Tune DSL
 
+[![CI](https://github.com/Rmuk655/Tune-DSL/actions/workflows/ci.yml/badge.svg)](https://github.com/Rmuk655/Tune-DSL/actions/workflows/ci.yml)
+
 A small domain-specific language for writing music as text and
 compiling it to real audio. You declare a tempo, one or more
 instruments, and named patterns of notes/chords/rests; the compiler
