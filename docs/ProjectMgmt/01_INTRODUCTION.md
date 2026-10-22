@@ -91,7 +91,7 @@ what a v2 might add.
   progressions into layered, multi-instrument Tune programs.
 - A Flask web GUI that is a thin layer over the exact same compiler
   modules the CLI uses.
-- A 242-test `pytest` suite (232 passing, 19 skipped in an environment
+- A 251-test `pytest` suite (232 passing, 19 skipped in an environment
   without the MLIR 19 toolchain installed — see
   [TEST_MATRIX.md](../testing/TEST_MATRIX.md)), including sample-level
   numeric diffs between backends for every waveform and every effect.
