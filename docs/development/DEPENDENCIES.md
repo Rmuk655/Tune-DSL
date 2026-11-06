@@ -17,13 +17,13 @@ mido pytest` covers everything above.
 | Tool | Why | Required for |
 |---|---|---|
 | `g++` (any recent GCC, C++17+) | `codegen.py` generates a `.cpp` file and shells out to `g++ -O3 -march=native -ffast-math -flto -funroll-loops` to compile it, then runs the result. | `--backend cpp` |
-| `mlir-opt-19` | Lowers the generated MLIR (standard dialects only — `func`/`arith`/`scf`/`memref`/`math`/`index`) to the `llvm` dialect. | `--backend mlir` |
-| `mlir-translate-19` | Translates `llvm`-dialect MLIR to LLVM IR text. | `--backend mlir` |
-| `llc-19` | Compiles LLVM IR to a native object file. | `--backend mlir` |
+| `mlir-opt-21` | Lowers the generated MLIR (standard dialects only — `func`/`arith`/`scf`/`memref`/`math`/`index`) to the `llvm` dialect. | `--backend mlir` |
+| `mlir-translate-21` | Translates `llvm`-dialect MLIR to LLVM IR text. | `--backend mlir` |
+| `llc-21` | Compiles LLVM IR to a native object file. | `--backend mlir` |
 | `gcc` | Links the object file above with a small C driver + WAV writer into a runnable binary. | `--backend mlir` |
 
 The MLIR toolchain is the one place where the exact major version
-matters: `codegen_mlir.py`'s generated IR text targets MLIR 19's
+matters: `codegen_mlir.py`'s generated IR text targets MLIR 21's
 syntax specifically, so a different major version's tools may reject
 it or behave differently. `g++` has no such version pin — any
 reasonably recent GCC works, since the generated C++ only uses
@@ -48,7 +48,7 @@ There's no bundled `check-deps.sh`-style script; the simplest checks:
 ```bash
 python3 -c "import numpy"                       # core compiler
 which g++                                         # C++ backend
-which mlir-opt-19 mlir-translate-19 llc-19 gcc     # MLIR backend
+which mlir-opt-21 mlir-translate-21 llc-21 gcc     # MLIR backend
 python3 -c "import flask"                        # web GUI
 python3 -c "import pytest, mido"                 # test suite
 ```

@@ -106,7 +106,7 @@ def test_compile_cpp_backend_returns_valid_wav(client):
 
 
 @pytest.mark.skipif(
-    any(shutil.which(t) is None for t in ("mlir-opt-19", "mlir-translate-19", "llc-19", "gcc")),
+    any(shutil.which(t) is None for t in ("mlir-opt-21", "mlir-translate-21", "llc-21", "gcc")),
     reason="MLIR toolchain not available",
 )
 def test_compile_mlir_backend_returns_valid_wav(client):

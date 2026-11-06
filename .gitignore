@@ -7,3 +7,8 @@ __pycache__/
 # Generated audio/images (scratch outputs in the project root)
 /*.wav
 /*.png
+.claude/
+.graphify/
+graphify-out/
+.vscode/
+.tools/

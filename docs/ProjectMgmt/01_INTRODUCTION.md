@@ -79,7 +79,7 @@ what a v2 might add.
   - `codegen_mlir.py` — generates a small, generic, reusable MLIR
     function library (real runtime dispatch via `scf.index_switch`,
     not per-event specialized code) and lowers it through
-    `mlir-opt-19` → `mlir-translate-19` → `llc-19` → `gcc`.
+    `mlir-opt-21` → `mlir-translate-21` → `llc-21` → `gcc`.
 - One dead-code-elimination pass, applied at the DSL semantic level: a
   note/chord/slide with velocity exactly 0 contributes nothing to any
   backend's mix and is provably safe to elide — see
@@ -92,7 +92,7 @@ what a v2 might add.
 - A Flask web GUI that is a thin layer over the exact same compiler
   modules the CLI uses.
 - A 251-test `pytest` suite (232 passing, 19 skipped in an environment
-  without the MLIR 19 toolchain installed — see
+  without the MLIR 21 toolchain installed — see
   [TEST_MATRIX.md](../testing/TEST_MATRIX.md)), including sample-level
   numeric diffs between backends for every waveform and every effect.
 
@@ -126,7 +126,7 @@ lives in [KNOWN_BUGS.md](../testing/KNOWN_BUGS.md)):
   silently ignoring them and producing audio that doesn't match what
   the Python backend would render for the same source.
 - **The MLIR backend needs a real, version-pinned toolchain**
-  (`mlir-opt-19`, `mlir-translate-19`, `llc-19`, `gcc`) that isn't
+  (`mlir-opt-21`, `mlir-translate-21`, `llc-21`, `gcc`) that isn't
   bundled with the project and may not be present on a given machine —
   the test suite and CLI both detect its absence and skip/fail cleanly
   rather than crashing.

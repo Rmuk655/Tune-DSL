@@ -30,7 +30,7 @@ python3 tune.py examples/extended_demo.tune
 python3 tune.py examples/melody.tune --backend cpp
 # wrote <n> samples, <t> sec
 
-# MLIR backend — requires mlir-opt-19/mlir-translate-19/llc-19/gcc
+# MLIR backend — requires mlir-opt-21/mlir-translate-21/llc-21/gcc
 python3 tune.py examples/melody.tune --backend mlir
 ```
 
@@ -82,8 +82,8 @@ exercise.
 **Q: Is the MLIR backend "real," or a wrapper around something else?**
 It's real: it emits actual MLIR text using only standard dialects
 (`func`, `arith`, `scf`, `memref`, `math`, `index` — no custom "Tune
-dialect"), and shells out to the real `mlir-opt-19` → `mlir-translate-19`
-→ `llc-19` → `gcc` pipeline. The generic function library it emits
+dialect"), and shells out to the real `mlir-opt-21` → `mlir-translate-21`
+→ `llc-21` → `gcc` pipeline. The generic function library it emits
 (`@synth_event` with a genuine runtime `scf.index_switch` for waveform
 dispatch, one `@apply_*` function per effect) was verified independently
 first as standalone `.mlir` prototypes under `mlir_test/`, compiled

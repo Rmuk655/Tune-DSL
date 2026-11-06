@@ -63,7 +63,7 @@ def test_cli_cpp_backend(tmp_path):
 
 def test_cli_mlir_backend(tmp_path):
     import shutil
-    if any(shutil.which(t) is None for t in ("mlir-opt-19", "mlir-translate-19", "llc-19", "gcc")):
+    if any(shutil.which(t) is None for t in ("mlir-opt-21", "mlir-translate-21", "llc-21", "gcc")):
         import pytest
         pytest.skip("MLIR toolchain not available")
     src = tmp_path / "song.tune"
@@ -80,7 +80,7 @@ def test_cli_mlir_backend_handles_effects_and_alternate_waveforms(tmp_path):
     # supports everything the C++ backend does, not just the original
     # sine/square/saw/triangle-only subset
     import shutil
-    if any(shutil.which(t) is None for t in ("mlir-opt-19", "mlir-translate-19", "llc-19", "gcc")):
+    if any(shutil.which(t) is None for t in ("mlir-opt-21", "mlir-translate-21", "llc-21", "gcc")):
         import pytest
         pytest.skip("MLIR toolchain not available")
     src = tmp_path / "song.tune"

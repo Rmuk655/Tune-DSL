@@ -25,9 +25,9 @@ triangle, pulse, noise, velocity, and all 5 effects (lowpass, highpass,
 distortion, tremolo, delay).
 
 Pipeline (all real, shell out and verify yourself):
-    mlir-opt-19        (lowers scf/arith/math/memref/func -> llvm dialect)
-    mlir-translate-19  (llvm dialect MLIR -> LLVM IR text)
-    llc-19             (LLVM IR -> native object file)
+    mlir-opt-21        (lowers scf/arith/math/memref/func -> llvm dialect)
+    mlir-translate-21  (llvm dialect MLIR -> LLVM IR text)
+    llc-21             (LLVM IR -> native object file)
     gcc                (links the object file with a small C driver + WAV writer)
 """
 
@@ -428,9 +428,9 @@ func.func @run_program(%buf: memref<?xf64>, %total: index) {{
 
 
 def compile_and_run_mlir(result: SemanticResult, out_wav_path: str, sample_rate: int = SAMPLE_RATE):
-    """Runs the real pipeline end to end. Requires mlir-opt-19,
-    mlir-translate-19, llc-19, and gcc on PATH."""
-    for tool in ("mlir-opt-19", "mlir-translate-19", "llc-19", "gcc"):
+    """Runs the real pipeline end to end. Requires mlir-opt-21,
+    mlir-translate-21, llc-21, and gcc on PATH."""
+    for tool in ("mlir-opt-21", "mlir-translate-21", "llc-21", "gcc"):
         if shutil.which(tool) is None:
             raise MlirBackendError(f"required tool {tool!r} not found on PATH")
 
@@ -448,7 +448,7 @@ def compile_and_run_mlir(result: SemanticResult, out_wav_path: str, sample_rate:
             f.write(mlir_text)
 
         r = subprocess.run(
-            ["mlir-opt-19", mlir_path,
+            ["mlir-opt-21", mlir_path,
              "--canonicalize", "--cse",
              "--convert-scf-to-cf", "--convert-math-to-libm",
              "--convert-math-to-llvm", "--convert-arith-to-llvm",
@@ -462,14 +462,14 @@ def compile_and_run_mlir(result: SemanticResult, out_wav_path: str, sample_rate:
             raise MlirBackendError(f"mlir-opt failed:\n{r.stderr}\n\nGenerated MLIR was:\n{mlir_text}")
 
         r = subprocess.run(
-            ["mlir-translate-19", "--mlir-to-llvmir", lowered_path, "-o", ll_path],
+            ["mlir-translate-21", "--mlir-to-llvmir", lowered_path, "-o", ll_path],
             capture_output=True, text=True,
         )
         if r.returncode != 0:
             raise MlirBackendError(f"mlir-translate failed:\n{r.stderr}")
 
         r = subprocess.run(
-            ["llc-19", "-O3", "-filetype=obj", ll_path, "-o", obj_path],
+            ["llc-21", "-O3", "-filetype=obj", ll_path, "-o", obj_path],
             capture_output=True, text=True,
         )
         if r.returncode != 0:

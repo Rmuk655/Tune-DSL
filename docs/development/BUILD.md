@@ -47,12 +47,12 @@ than failing with a raw `subprocess` error.
 
 ## 4. Optional: MLIR backend
 
-Needs the LLVM/MLIR 19 command-line tools, specifically
-`mlir-opt-19`, `mlir-translate-19`, and `llc-19`, plus `gcc` for the
+Needs the LLVM/MLIR 21 command-line tools, specifically
+`mlir-opt-21`, `mlir-translate-21`, and `llc-21`, plus `gcc` for the
 final link step:
 
 ```bash
-sudo apt install llvm-19 mlir-19-tools    # exact package names vary by distro/release
+sudo apt install llvm-21 mlir-21-tools    # exact package names vary by distro/release
 ```
 
 ```bash
@@ -62,7 +62,7 @@ python3 tune.py examples/melody.tune --backend mlir
 Any missing tool is detected and reported by name, rather than the
 pipeline failing partway through with an opaque `subprocess` error.
 This is the one dependency where the exact major version matters —
-`codegen_mlir.py`'s generated IR is written against MLIR 19's syntax.
+`codegen_mlir.py`'s generated IR is written against MLIR 21's syntax.
 
 ## 5. Optional: test suite
 

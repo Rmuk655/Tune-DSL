@@ -13,10 +13,10 @@ from semantic import analyze
 import reference as ref
 from codegen_mlir import generate_mlir, compile_and_run_mlir, MlirBackendError
 
-MLIR_TOOLS = ("mlir-opt-19", "mlir-translate-19", "llc-19", "gcc")
+MLIR_TOOLS = ("mlir-opt-21", "mlir-translate-21", "llc-21", "gcc")
 requires_mlir = pytest.mark.skipif(
     any(shutil.which(t) is None for t in MLIR_TOOLS),
-    reason="mlir-opt-19/mlir-translate-19/llc-19/gcc not all available on this machine",
+    reason="mlir-opt-21/mlir-translate-21/llc-21/gcc not all available on this machine",
 )
 
 
@@ -115,7 +115,7 @@ def test_mlir_output_is_valid_and_compiles(tmp_path):
     mlir_text, _, _ = generate_mlir(result)
     mlir_path = tmp_path / "test.mlir"
     mlir_path.write_text(mlir_text)
-    proc = subprocess.run(["mlir-opt-19", str(mlir_path)], capture_output=True, text=True)
+    proc = subprocess.run(["mlir-opt-21", str(mlir_path)], capture_output=True, text=True)
     assert proc.returncode == 0, f"mlir-opt rejected generated MLIR:\n{proc.stderr}"
 
 
@@ -237,8 +237,8 @@ def test_compile_and_run_reports_missing_tool_cleanly(tmp_path, monkeypatch):
     src = "instrument lead = sine\npattern m { note C4 : 1/4 }\nplay lead m\n"
     result = analyze(parse(src))
     original_which = shutil.which
-    monkeypatch.setattr(shutil, "which", lambda name: None if name == "llc-19" else original_which(name))
-    with pytest.raises(MlirBackendError, match="llc-19"):
+    monkeypatch.setattr(shutil, "which", lambda name: None if name == "llc-21" else original_which(name))
+    with pytest.raises(MlirBackendError, match="llc-21"):
         compile_and_run_mlir(result, str(tmp_path / "out.wav"))
 
 

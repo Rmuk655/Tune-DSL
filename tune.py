@@ -60,7 +60,7 @@ def compile_cpp_backend(result, out_path):
 
 def compile_mlir_backend(result, out_path):
     """Generate, lower (mlir-opt -> mlir-translate -> llc), compile, and
-    run the MLIR backend. Requires mlir-opt-19, mlir-translate-19, llc-19,
+    run the MLIR backend. Requires mlir-opt-21, mlir-translate-21, llc-21,
     and gcc on PATH. Full feature parity with the C++ backend -- all 6
     waveforms, velocity, and all 5 effects. See src/codegen_mlir.py."""
     from codegen_mlir import compile_and_run_mlir, MlirBackendError

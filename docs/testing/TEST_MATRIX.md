@@ -9,7 +9,7 @@ running the suite:
 
 (skipped tests are all MLIR-toolchain-gated — see "Skip conditions"
 below; the environment used for this doc had `g++` available but not
-`mlir-opt-19`/`mlir-translate-19`/`llc-19`.)
+`mlir-opt-21`/`mlir-translate-21`/`llc-21`.)
 
 ## Coverage by file
 
@@ -46,10 +46,10 @@ right" a CI assertion instead of a listening exercise.
 | Condition | Tests affected |
 |---|---|
 | `g++` not on `PATH` | Would skip C++-backend tests (none were skipped in the verified run above, since `g++` was present) |
-| `mlir-opt-19`/`mlir-translate-19`/`llc-19`/`gcc` not all on `PATH` | All MLIR-backend tests in `test_codegen_mlir.py`, plus the MLIR-backend cases in `test_cli.py` and `test_gui.py` — 19 tests total in the verified run |
+| `mlir-opt-21`/`mlir-translate-21`/`llc-21`/`gcc` not all on `PATH` | All MLIR-backend tests in `test_codegen_mlir.py`, plus the MLIR-backend cases in `test_cli.py` and `test_gui.py` — 19 tests total in the verified run |
 
 Both conditions are detected and reported as a clean `pytest` skip with
-a stated reason (e.g. `"mlir-opt-19/mlir-translate-19/llc-19/gcc not
+a stated reason (e.g. `"mlir-opt-21/mlir-translate-21/llc-21/gcc not
 all available on this machine"`), not a failure — a machine without
 either toolchain still gets a fully-passing run for everything that
 toolchain gates.

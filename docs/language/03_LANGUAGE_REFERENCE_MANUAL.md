@@ -226,7 +226,7 @@ front end is entirely backend-agnostic. Select with
 | All 6 waveforms, velocity, all 5 effects, `strum` | ✅ | ✅ | ✅ |
 | `slide` | ✅ | ❌ hard error | ❌ hard error |
 | Per-instrument `envelope` | ✅ | ❌ hard error | ❌ hard error |
-| External toolchain | none (numpy only) | `g++` | `mlir-opt-19`, `mlir-translate-19`, `llc-19`, `gcc` |
+| External toolchain | none (numpy only) | `g++` | `mlir-opt-21`, `mlir-translate-21`, `llc-21`, `gcc` |
 
 `cpp`/`mlir` raise a clear, actionable error (rather than silently
 dropping the feature) if the source uses `slide` or a custom

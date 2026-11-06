@@ -228,7 +228,7 @@ would have; judged an acceptable cost for the design goal above.
 
 **Problem.** How to gain confidence that a hand-written MLIR function
 library is numerically correct, given the multi-stage external
-toolchain (`mlir-opt-19` → `mlir-translate-19` → `llc-19` → `gcc`)
+toolchain (`mlir-opt-21` → `mlir-translate-21` → `llc-21` → `gcc`)
 between writing the IR and hearing the result?
 
 **Decision.** Build and verify each piece of the function library as a

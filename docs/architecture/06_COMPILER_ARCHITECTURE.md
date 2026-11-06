@@ -52,7 +52,7 @@ chordsheet.py     chordsheet_to_tune()   chord-sheet text -> Tune DSL source
 | `src/semantic.py` | AST → `SemanticResult`. The only module that evaluates expressions, resolves `let`, or flattens `pattern`/`repeat` structure into absolute-time events. |
 | `src/reference.py` | Backend 1 (ground truth): NumPy synthesizer + hand-rolled WAV writer. |
 | `src/codegen.py` | Backend 2: generates a self-contained C++ program, compiles it with `g++`, runs it. |
-| `src/codegen_mlir.py` | Backend 3: generates a small generic MLIR function library, lowers it through `mlir-opt-19`/`mlir-translate-19`/`llc-19`, links with `gcc`, runs it. |
+| `src/codegen_mlir.py` | Backend 3: generates a small generic MLIR function library, lowers it through `mlir-opt-21`/`mlir-translate-21`/`llc-21`, links with `gcc`, runs it. |
 | `src/midi_export.py` | `SemanticResult` → Standard MIDI File (hand-rolled byte-level writer). |
 | `src/chord_theory.py` | Chord symbol (`"Am7"`, `"C/E"`) → pitch names. |
 | `src/chordsheet.py` | Chord-sheet text → Tune DSL source text (feeds back into `lexer.py`). |
@@ -135,8 +135,8 @@ Builds one small, generic, reusable function library — `@synth_event`
 one `@apply_*` function per effect — called once per event/effect,
 rather than unrolling specialized per-event code. Uses only standard
 MLIR dialects (`func`, `arith`, `scf`, `memref`, `math`, `index`) — no
-custom dialect. Pipeline: `mlir-opt-19` (lowers to the `llvm` dialect)
-→ `mlir-translate-19` (to LLVM IR text) → `llc-19` (to a native object
+custom dialect. Pipeline: `mlir-opt-21` (lowers to the `llvm` dialect)
+→ `mlir-translate-21` (to LLVM IR text) → `llc-21` (to a native object
 file) → `gcc` (links with a small C driver + WAV writer). The
 `mlir_test/` directory holds standalone prototypes that were compiled
 through this exact pipeline and numerically diffed against

@@ -42,7 +42,7 @@ for defects:
   is the most concrete outstanding implementation task — see
   [../language/05_LANGUAGE_EVOLUTION.md §5.4](../language/05_LANGUAGE_EVOLUTION.md#54-known-backend-asymmetry-not-a-language-boundary).
 - **The MLIR backend requires a real, version-pinned external
-  toolchain** (`mlir-opt-19`, `mlir-translate-19`, `llc-19`, `gcc`)
+  toolchain** (`mlir-opt-21`, `mlir-translate-21`, `llc-21`, `gcc`)
   that may simply not be installed on a given machine. Both the CLI and
   the test suite detect this and fail/skip cleanly with a named-tool
   error rather than crashing — see
