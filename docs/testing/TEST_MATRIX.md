@@ -1,7 +1,7 @@
 # Test Matrix
 
-251 tests across 13 files, one file per module. Verified by actually
-running the suite:
+258 test functions across 13 files, one file per module. The run below
+predates later additions:
 
 ```text
 232 passed, 19 skipped in ~13s

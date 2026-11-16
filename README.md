@@ -29,7 +29,7 @@ source.tune -> lexer -> parser -> AST -> semantic analysis
 - **MIDI export** for taking a program's notes into a DAW.
 - A **Flask web GUI** that runs the exact same compiler pipeline as the
   command line.
-- A 251-test `pytest` suite, including sample-level numeric diffs
+- A `pytest` suite of 258 test functions, including sample-level numeric diffs
   between backends.
 
 This is a personal/hackathon project (not a graded team project). See
@@ -79,7 +79,7 @@ setup (including the optional C++/MLIR toolchains).
 | [docs/architecture/INTERFACES.md](docs/architecture/INTERFACES.md) | The data shapes that cross module boundaries (`Token`, AST nodes, `SemanticResult`, `NoteEvent`) |
 | [docs/development/BUILD.md](docs/development/BUILD.md) | Install, build, run, per-backend requirements |
 | [docs/development/DEPENDENCIES.md](docs/development/DEPENDENCIES.md) | Every dependency and why it's needed |
-| [docs/testing/TEST_MATRIX.md](docs/testing/TEST_MATRIX.md) | What the 251-test suite actually covers, file by file |
+| [docs/testing/TEST_MATRIX.md](docs/testing/TEST_MATRIX.md) | What the 258-function test suite actually covers, file by file |
 | [docs/testing/KNOWN_BUGS.md](docs/testing/KNOWN_BUGS.md) | Known, by-design limitations (there are no open defects at time of writing) |
 
 ## Project layout
@@ -99,5 +99,5 @@ TuneDSL/
 ├── gui/            # Flask web GUI over the same src/ pipeline
 ├── examples/       # sample .tune programs and chord sheets
 ├── mlir_test/      # standalone MLIR prototypes, verified before embedding
-└── tests/          # pytest suite (251 tests, one file per module)
+└── tests/          # pytest suite (258 test functions, one file per module)
 ```
