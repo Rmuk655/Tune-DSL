@@ -36,6 +36,10 @@ This is a personal/hackathon project (not a graded team project). See
 [docs/ProjectMgmt/01_INTRODUCTION.md](docs/ProjectMgmt/01_INTRODUCTION.md)
 for the fuller motivation.
 
+## Setup
+
+Ubuntu/WSL (needs sudo): `bash setup.sh` installs g++ and, if your apt sources have them, the optional `llvm-21` and `mlir-21-tools` for the MLIR backend (`MLIR_TOOLS=0 bash setup.sh` skips those). It creates `.venv`, installs `requirements-dev.txt` (numpy, flask, mido, matplotlib, pytest) and runs the test suite; MLIR tests are skipped when the tools are absent. Then `source .venv/bin/activate`.
+
 ## Quickstart
 
 ```bash

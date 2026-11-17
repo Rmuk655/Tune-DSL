@@ -1,2 +1,7 @@
-numpy
-flask
+# Inferred from imports in src/, gui/, tests/. numpy: audio; flask: web GUI; mido: MIDI export/tests;
+# matplotlib: optional, only for audio_compare plots.
+# Non-pip tools: g++ (C++ backend), llvm-21 + mlir-21-tools (optional MLIR backend). See setup.sh.
+numpy>=1.24
+flask>=3.0
+mido>=1.3
+matplotlib>=3.7
